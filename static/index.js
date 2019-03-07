@@ -18,8 +18,21 @@ const client = net.createConnection(8080)
 client.pipe(abstractor)
 abstractor.pipe(client)
 
-abstractor.send('login', {
-	'name': os.userInfo().username.toLowerCase()
+const login = () => {
+	abstractor.send('login', {
+		'name': document.querySelector('#login > input').value
+	})
+
+	document.querySelector('#login').style.display = 'none'
+	document.querySelector('#game').style.display = 'flex'
+}
+
+document.querySelector('#login > button').onclick = login
+
+document.querySelector('#login > input').addEventListener('keypress', (e) => {
+	if (e.key === 'Enter') {
+		login()
+	}
 })
 
 const gameState = {

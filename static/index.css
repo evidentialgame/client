@@ -41,8 +41,19 @@ input:focus {
 	overflow-wrap: break-word;
 }
 
+#login {
+	margin: auto;
+
+	margin-top: 50px;
+
+	width: 400px;
+	height: 300px;
+
+	color: #E3E3E3;
+}
+
 #game {
-	display: flex;
+	display: none;
 }
 
 #chat {
