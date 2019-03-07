@@ -1,0 +1,2 @@
+# client
+Evidential game client
