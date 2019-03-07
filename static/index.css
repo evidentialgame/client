@@ -1,0 +1,92 @@
+@font-face {
+	font-family: 'Pixelated';
+	src: url('font/Minecraftia.ttf');
+}
+
+* {
+	font-family: 'Pixelated';
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	
+	background-color: #101010;
+}
+
+a {
+	font-size: 10em;
+	
+	color: #FFFFFF;
+}
+
+canvas {
+	width: 60vw;
+	height: 100vh;
+}
+
+input:focus {
+	outline-width: 0;
+}
+
+.chatSegment {
+	display: inline;
+}
+
+.message {
+	user-select: none;
+	-webkit-user-select: none;
+	
+	width: 35vw;
+	overflow-wrap: break-word;
+}
+
+#game {
+	display: flex;
+}
+
+#chat {
+	width: 40vw;
+	
+	display: flex;
+	
+	flex-direction: column;
+	justify-content: center;
+	align-items: stretch;
+}
+
+#messages::-webkit-scrollbar-track {
+	background-color: #4D778A;
+}
+
+#messages::-webkit-scrollbar {
+	width: 15px;
+	
+	background-color: #E3E3E3;
+}
+
+#messages::-webkit-scrollbar-thumb {
+	width: 15px;
+	
+	background-color: #E3E3E3;
+}
+
+#messages {
+	height: 95vh;
+	width: 40vw;
+	
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
+#messageBox {
+	height: 5vh;
+	
+	background-color: transparent;
+
+	border: 1px solid #4D778A;
+	
+	color: #FFFFFF;
+	
+	font-size: 1.2em;
+}

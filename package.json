@@ -1,0 +1,18 @@
+{
+  "name": "evidential-client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ethan Davis",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "canvaxjs": "^0.6.2",
+    "protocore": "^3.1.1"
+  },
+  "devDependencies": {
+    "electron": "^4.0.6"
+  }
+}
