@@ -2,6 +2,6 @@
 Evidential game client
 
 (c) 2019 Ethan Davis
-All Rights Reserved
 
+All rights reserved.
 Do not redistribute.
