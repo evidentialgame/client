@@ -20,14 +20,20 @@ const playerLocations = [
 		'y': renderer.element.height / 2
 	},
 	{
-		'x': renderer.element.width / 2,
-		'y': 100
+		'x': renderer.element.width / 3,
+		'y': renderer.element.height - 100
+	},
+	{
+		'x': renderer.element.width - renderer.element.width / 3,
+		'y': renderer.element.height - 100
 	},
 	{
 		'x': renderer.element.width / 2,
-		'y': renderer.element.height - 100
+		'y': renderer.element.height - 300
 	}
 ]
+
+const rainParticles = []
 
 const sprites = {
 	'officer': [0, 2],
@@ -44,16 +50,57 @@ setInterval(() => {
 	})
 }, 1000)
 
+// Process rain particles
+
+setInterval(() => {
+	for (let i = 0; i < rainParticles.length; i++) {
+		if (rainParticles[i].y > rainParticles[i].endsAt) {
+			rainParticles[i].dying = true
+
+			rainParticles[i].dyingFor++
+
+			if (rainParticles[i].dyingFor % 10 === 0) {
+				rainParticles[i].currentSprite++
+			}
+
+			if (rainParticles[i].currentSprite > 5) {
+				rainParticles.splice(i, 1)
+
+				i--
+			}
+		}
+		else {
+			rainParticles[i].y += rainParticles[i].fallRate
+		}
+	}
+}, 10)
+
+setInterval(() => {
+	rainParticles.push({
+		'x': Math.floor(Math.random() * renderer.element.width),
+		'y': -10,
+		'endsAt': Math.floor(Math.random() * (renderer.element.height - 400)) + 400,
+		'dying': false,
+		'currentSprite': 0,
+		'dyingFor': 0,
+		'fallRate': Math.floor(Math.random() * 3) + 2
+	})
+}, 50)
+
+// Main rendering
+
 const renderFrame = () => {
 	renderer.clear()
 	
-	renderer.add(new Image({
+	/*renderer.add(new Image({
 		'width': 50,
 		'height': 50,
 		'x': renderer.element.width / 2 - 25,
 		'y': renderer.element.height / 2 - 25,
 		'source': 'images/sprites/objects/rose.png'
-	}))
+	}))*/
+
+	// Render players
 	
 	for (let i = 0; i < gameState.players.length; i++) {
 		renderer.add(new Image({
@@ -92,7 +139,39 @@ const renderFrame = () => {
 			}))
 		}
 	}
-	
+
+	// Render rain particles
+
+	for (let i = 0; i < rainParticles.length; i++) {
+		renderer.add(new Image({
+			'width': 16,
+			'height': 16,
+			'source': 'images/sprites/rain/sprite_' + rainParticles[i].currentSprite + '.png',
+			'x': rainParticles[i].x - 4,
+			'y': rainParticles[i].y - 4
+		}))
+	}
+
+	// Render title
+
+	renderer.add(new Text({
+		'text': gameState.title.title,
+		'x': renderer.element.width / 2,
+		'y': renderer.element.height - 100,
+		'alignment': 'center',
+		'color': '#EFEFE7',
+		'font': '30px Pixelated'
+	}))
+
+	renderer.add(new Text({
+		'text': gameState.title.subtitle,
+		'x': renderer.element.width / 2,
+		'y': renderer.element.height - 80,
+		'alignment': 'center',
+		'color': '#EFEFE7',
+		'font': '20px Pixelated'
+	}))
+
 	renderer.render()
 	
 	window.requestAnimationFrame(renderFrame)

@@ -41,7 +41,7 @@ input:focus {
 	overflow-wrap: break-word;
 }
 
-#login {
+#login, #status {
 	margin: auto;
 
 	margin-top: 50px;
@@ -50,6 +50,20 @@ input:focus {
 	height: 300px;
 
 	color: #E3E3E3;
+}
+
+#login {
+	display: none;
+}
+
+#loginError {
+	display: none;
+
+	padding: 5px;
+
+	border: 1px solid #780F0F;
+
+	color: #780F0F;
 }
 
 #game {
