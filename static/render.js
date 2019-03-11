@@ -33,6 +33,32 @@ const playerLocations = [
 	}
 ]
 
+const selectRegions = []
+
+for (let i = 0; i < playerLocations.length; i++) {
+	const genRect = new canvax.Rectangle({
+		'x': playerLocations[i].x - 70,
+		'y': playerLocations[i].y - 70,
+		'width': 140,
+		'height': 140
+	})
+
+	genRect.on('click', () => {
+		document.querySelector('#messageBox').value = '/w ' + gameState.players[i].name + ' '
+		document.querySelector('#messageBox').focus()
+	})
+
+	genRect.on('mousein', () => {
+		renderer.element.style.cursor = 'pointer'
+	})
+
+	genRect.on('mouseout', () => {
+		renderer.element.style.cursor = 'default'
+	})
+
+	selectRegions.push(genRect)
+}
+
 const rainParticles = []
 
 const sprites = {
@@ -103,6 +129,8 @@ const renderFrame = () => {
 	// Render players
 	
 	for (let i = 0; i < gameState.players.length; i++) {
+		renderer.add(selectRegions[i])
+
 		renderer.add(new Image({
 			'width': 140,
 			'height': 140,
