@@ -62,7 +62,13 @@ abstractor.on('loginStatus', (data) => {
 	}
 })
 
-document.querySelector('#login > button').onclick = login
+document.querySelector('#status > a').onclick = () => {
+	document.querySelector('#status > a').style.display = 'none'
+
+	window.location.reload()
+}
+
+document.querySelector('#login > a').onclick = login
 
 document.querySelector('#login > input').addEventListener('keypress', (e) => {
 	document.querySelector('#loginError').style.display = 'none'
@@ -72,12 +78,15 @@ document.querySelector('#login > input').addEventListener('keypress', (e) => {
 	}
 })
 
+document.querySelector('#login > input').focus()
+
 const gameState = {
 	'players': [],
 	'title': {
 		'title': '',
 		'subtitle': ''
-	}
+	},
+	'raining': true
 }
 
 abstractor.on('title', (data) => {

@@ -5,6 +5,8 @@
 
 * {
 	font-family: 'Pixelated';
+	
+	image-rendering: pixelated;
 }
 
 body {
@@ -14,15 +16,23 @@ body {
 	background-color: #101010;
 }
 
+p {
+	margin: 0;
+}
+
 a {
-	font-size: 10em;
-	
+	display: block;
+
+	margin-top: 10px;
+
 	color: #FFFFFF;
 }
 
 canvas {
 	width: 60vw;
 	height: 100vh;
+	
+	background-size: cover;
 }
 
 input:focus {
@@ -59,11 +69,13 @@ input:focus {
 #loginError {
 	display: none;
 
+	margin-top: 20px;
+
 	padding: 5px;
 
-	border: 1px solid #780F0F;
+	border: 2px solid #BB031F;
 
-	color: #780F0F;
+	color: #BB031F;
 }
 
 #game {
