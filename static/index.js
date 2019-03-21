@@ -64,6 +64,7 @@ abstractor.on('loginStatus', (data) => {
 
 document.querySelector('#status > a').onclick = () => {
 	document.querySelector('#status > a').style.display = 'none'
+	document.querySelector('#status > p').textContent = 'Retrying...'
 
 	window.location.reload()
 }
@@ -84,9 +85,11 @@ const gameState = {
 	'players': [],
 	'title': {
 		'title': '',
-		'subtitle': ''
+		'subtitle': '',
+		'boardText': ''
 	},
-	'raining': true
+	'weather': 0, // 0 = clear, 1 = rain
+	'background': null
 }
 
 abstractor.on('title', (data) => {
@@ -95,4 +98,6 @@ abstractor.on('title', (data) => {
 
 abstractor.on('updateGame', (state) => {
 	gameState.players = state.players
+	gameState.background = state.background
+	gameState.weather = state.weather
 })

@@ -1,7 +1,7 @@
 // Load after index.js
 
 const canvax = require('canvaxjs')
-const {Rectangle, Image, Circle, Text} = canvax
+const {Rectangle, Image, Circle, Ellipse, Text} = canvax
 
 const renderer = new canvax.Renderer(document.querySelector('canvas'))
 
@@ -13,23 +13,28 @@ renderer.ctx.imageSmoothingEnabled = false
 const playerLocations = [
 	{
 		'x': 100,
-		'y': renderer.element.height / 2
+		'y': renderer.element.height / 2,
+		'spriteDirection': 'right'
 	},
 	{
 		'x': renderer.element.width - 100,
-		'y': renderer.element.height / 2
+		'y': renderer.element.height / 2,
+		'spriteDirection': 'left'
 	},
 	{
-		'x': renderer.element.width / 3,
-		'y': renderer.element.height - 100
+		'x': renderer.element.width / 4,
+		'y': renderer.element.height - 100,
+		'spriteDirection': 'right'
 	},
 	{
-		'x': renderer.element.width - renderer.element.width / 3,
-		'y': renderer.element.height - 100
+		'x': renderer.element.width - renderer.element.width / 4,
+		'y': renderer.element.height - 100,
+		'spriteDirection': 'left'
 	},
 	{
 		'x': renderer.element.width / 2,
-		'y': renderer.element.height - 300
+		'y': renderer.element.height - 100,
+		'spriteDirection': 'right'
 	}
 ]
 
@@ -37,15 +42,16 @@ const selectRegions = []
 
 for (let i = 0; i < playerLocations.length; i++) {
 	const genRect = new canvax.Rectangle({
-		'x': playerLocations[i].x - 100,
-		'y': playerLocations[i].y - 100,
+		'x': playerLocations[i].x - (130 / 2),
+		'y': playerLocations[i].y - (240 / 2),
 		'width': 130,
 		'height': 240
 	})
 
 	genRect.on('click', () => {
-		document.querySelector('#messageBox').value = '/w ' + gameState.players[i].name + ' '
-		document.querySelector('#messageBox').focus()
+		abstractor.send('select', {
+			'index': i
+		})
 	})
 
 	genRect.on('mousein', () => {
@@ -102,7 +108,7 @@ setInterval(() => {
 }, 10)
 
 setInterval(() => {
-	if (gameState.raining) {
+	if (gameState.weather === 1) {
 		rainParticles.push({
 			'x': Math.floor(Math.random() * renderer.element.width),
 			'y': -10,
@@ -122,7 +128,7 @@ const renderFrame = () => {
 	
 	// Background image
 	
-	renderer.element.style.backgroundImage = 'url(\'images/backgrounds/station.png\')'
+	if (typeof gameState.background === 'string') renderer.element.style.backgroundImage = 'url(\'' + gameState.background + '\')'
 	
 	renderer.add(new Image({
 		'width': 50,
@@ -133,12 +139,13 @@ const renderFrame = () => {
 	}))
 	
 	renderer.add(new Text({
-		'text': 'dis a rose',
+		'text': gameState.title.boardText,
 		'font': '20px Pixelated',
 		'color': '#010101',
 		'alignment': 'center',
 		'x': renderer.element.width / 2,
-		'y': renderer.element.height / 2
+		'y': renderer.element.height / 2,
+		'maxWidth': 200
 	}))
 
 	// Render players
@@ -146,7 +153,18 @@ const renderFrame = () => {
 	for (let i = 0; i < gameState.players.length; i++) {
 		renderer.add(selectRegions[i])
 		
-		const playerImage = gameState.players[i].name.toLowerCase() === 'borilla' ? 'images/borilla.png' : 'images/sprites/officer/sprite_' + sprites.officer[0] + '.png'
+		const playerImage = gameState.players[i].name.toLowerCase() === 'borilla' ? 'images/borilla.png' : 'images/sprites/' + gameState.players[i].skin + '/' + playerLocations[i].spriteDirection + '_' + sprites.officer[0] + '.png'
+		
+		if (gameState.players[i].selected) {
+			renderer.add(new Ellipse({
+				'width': 150,
+				'height': 50,
+				'x': playerLocations[i].x - (150 / 2),
+				'y': playerLocations[i].y + 105,
+				'borderColor': '#FFDC00',
+				'borderWeight': 5
+			}))
+		}
 		
 		renderer.add(new Image({
 			'width': 240,
@@ -168,7 +186,7 @@ const renderFrame = () => {
 		if (gameState.players[i].typing) {
 			renderer.add(new Rectangle({
 				'x': playerLocations[i].x - 40,
-				'y': playerLocations[i].y + 115,
+				'y': playerLocations[i].y + 135,
 				'backgroundColor': '#EFEFE7',
 				'width': 80,
 				'height': 25
@@ -177,7 +195,7 @@ const renderFrame = () => {
 			renderer.add(new Text({
 				'text': '...',
 				'x': playerLocations[i].x,
-				'y': playerLocations[i].y + 140,
+				'y': playerLocations[i].y + 160,
 				'alignment': 'center',
 				'color': '#000000',
 				'font': '20px Pixelated'
@@ -225,13 +243,23 @@ const renderFrame = () => {
 		const ay = typeof a.lands === 'number' ? a.lands/* + ah*/ : (a.y + ah)
 		const by = typeof b.lands === 'number' ? b.lands/* + bh*/ : (b.y + bh)
 		
-		if (ay >= by || ay.type === 'text') {
+		if ((ay >= by || a.type === 'text') && a.type !== 'ellipse') {
 			return 1
 		}
 		else return -1
 	})
 
 	renderer.render()
+	
+	const gradient = renderer.ctx.createRadialGradient(renderer.element.width / 2, renderer.element.height / 2, 20, renderer.element.width / 2, renderer.element.height / 2, 400)
+	
+	gradient.addColorStop(0, '#00000030')
+	
+	gradient.addColorStop(1, '#00000070')
+	
+	renderer.ctx.fillStyle = gradient
+	
+	renderer.ctx.fillRect(0, 0, renderer.element.width, renderer.element.height)
 	
 	window.requestAnimationFrame(renderFrame)
 }
