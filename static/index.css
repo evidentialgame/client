@@ -13,7 +13,7 @@ body {
 	margin: 0;
 	padding: 0;
 	
-	background-color: #101010;
+	background-color: #05090C;
 }
 
 p {
@@ -33,6 +33,11 @@ canvas {
 	height: 100vh;
 	
 	background-size: cover;
+	
+	opacity: 1;
+	
+	transition: opacity 1s;
+	-webkit-transition: opacity 1s;
 }
 
 input:focus {

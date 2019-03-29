@@ -86,18 +86,44 @@ const gameState = {
 	'title': {
 		'title': '',
 		'subtitle': '',
-		'boardText': ''
+		'boardText': '',
+		'displayMode': 0
 	},
 	'weather': 0, // 0 = clear, 1 = rain
-	'background': null
+	'background': null,
+	'showVoteUI': false,
+	'transitioning': false,
+	'tamperUI': {
+		'display': false,
+		'canTamper': true
+	},
+	'vignette': 80
 }
+
+abstractor.on('transition', (data) => {
+	gameState.transitioning = true
+	
+	document.querySelector('canvas').style.opacity = 0
+	
+	setTimeout(() => {
+		gameState.transitioning = false
+		
+		document.querySelector('canvas').style.opacity = 1
+	}, data.ms)
+})
 
 abstractor.on('title', (data) => {
 	gameState.title = data
 })
 
+abstractor.on('setVoteUI', (data) => {
+	gameState.showVoteUI = data.display
+})
+
+abstractor.on('setTamperUI', (data) => {
+	gameState.tamperUI = data
+})
+
 abstractor.on('updateGame', (state) => {
-	gameState.players = state.players
-	gameState.background = state.background
-	gameState.weather = state.weather
+	Object.assign(gameState, state) // weather, background, players
 })
