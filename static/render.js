@@ -53,6 +53,16 @@ const allPlayerLocations = {
 			'x': renderer.element.width / 2 + 10,
 			'y': renderer.element.height - 275,
 			'spriteDirection': 'left'
+		},
+		{
+			'x': 3000,
+			'y': 3000,
+			'spriteDirection': 'left'
+		},
+		{
+			'x': 3000,
+			'y': 3000,
+			'spriteDirection': 'left'
 		}
 	]
 }
@@ -224,22 +234,35 @@ const renderFrame = () => {
 		'source': 'images/sprites/objects/rose.png'
 	}))*/
 	
-	renderer.add(new Text({
-		'text': gameState.title.boardText,
-		'font': '20px Pixelated',
-		'color': '#010101',
-		'alignment': 'center',
-		'x': renderer.element.width / 2,
-		'y': renderer.element.height / 2 - 100,
-		'maxWidth': 200,
-		'z': -1
-	}))
+	let btY = renderer.element.height / 2 - 100
+	const lines = gameState.title.boardText.split('\n')
+	
+	for (let i = 0; i < lines.length; i++) {
+		renderer.add(new Text({
+			'text': lines[i],
+			'font': '20px Pixelated',
+			'color': '#010101',
+			'alignment': 'center',
+			'x': renderer.element.width / 2,
+			'y': btY,
+			'maxWidth': 200,
+			'z': -1
+		}))
+		
+		btY += 23
+	}
 
 	// Render players
 	
 	for (let i = 0; i < gameState.players.length; i++) {
 		if (gameState.background === 'images/backgrounds/station.png') {
 			renderer.add(selectRegions[i])
+		}
+		
+		if (playerLocations.length - 1 < i) {
+			alert('Caught player location out of range. render.js:~263')
+			
+			continue
 		}
 		
 		const playerImage = 'images/sprites/' + gameState.players[i].skin + '/' + playerLocations[i].spriteDirection + '_' + sprites.officer[0] + '.png'
@@ -307,6 +330,105 @@ const renderFrame = () => {
 			'x': rainParticles[i].x - 16,
 			'y': rainParticles[i].y - 16,
 			'z': rainParticles[i].endsAt > renderer.element.height - 100 ? 90 : 10
+		}))
+	}
+	
+	// Render card
+	
+	if (gameState.card !== null) {
+		renderer.add(new Image({
+			'width': 128,
+			'height': 128,
+			'x': 20,
+			'y': 0,
+			'source': gameState.card.cardImage,
+			'z': 310
+		}))
+		
+		if (gameState.card.text.length > 0) {
+			renderer.add(new Text({
+				'x': 148,
+				'y': 54,
+				'alignment': 'left',
+				'text': gameState.card.text,
+				'color': gameState.card.textColor,
+				'font': '15px Pixelated',
+				'z': 320
+			}))
+		}
+	}
+	
+	// Render teams
+	
+	let currentTeamX = renderer.element.width - 128 - 10
+	let hasFoundCompleted = false
+	
+	for (let i = gameState.teams.length - 1; i >= 0; i--) {
+		if (gameState.teams[i].current === true) {
+			renderer.add(new Image({
+				'width': 20,
+				'height': 20,
+				'source': 'images/sprites/objects/arrow.png',
+				'x': currentTeamX - 10,
+				'y': 89,
+				'z': 310
+			}))
+		}
+		
+		renderer.add(new Image({
+			'width': 80,
+			'height': 80,
+			'x': currentTeamX - 40,
+			'y': 17,
+			'source': 'images/sprites/folder/' + (gameState.teams[i].victor === 'mafia' ? 'red' : (gameState.teams[i].victor === 'officers' ? 'green' : 'blank')) + '.png',
+			'z': 310
+		}))
+		
+		renderer.add(new Text({
+			'text': gameState.teams[i].size,
+			'color': '#000000',
+			'font': '30px Pixelated',
+			'alignment': 'center',
+			'x': currentTeamX + 4,
+			'y': 90,
+			'z': 320
+		}))
+		
+		currentTeamX -= 90
+	}
+	
+	// Render topbar
+	
+	renderer.add(new Rectangle({
+		'width': renderer.element.width,
+		'height': 110,
+		'x': 0,
+		'y': 0,
+		'backgroundColor': '#FFFFFF43',
+		'z': 300
+	}))
+	
+	// Render timer
+	if (gameState.timer.display) {
+		const seconds = (gameState.timer.timeLeft % 60)
+		
+		renderer.add(new Image({
+			'width': 120,
+			'height': 120,
+			'x': renderer.element.width - 80 - (120 / 2),
+			'y': 135,
+			'source': 'images/sprites/objects/clock.png',
+			'z': 390
+		}))
+		
+		renderer.add(new Text({
+			'text': Math.floor(gameState.timer.timeLeft / 60) + ':' + (seconds.toString().length === 1 ? '0' : '') + (gameState.timer.timeLeft % 60),
+			'color': gameState.timer.timeLeft > 10 ? '#FFDC00' : '#ED553B',
+			'alignment': 'center',
+			'x': renderer.element.width - 80,
+			'y': 160 + (120 / 2),
+			'z': 400,
+			'font': '20px Pixelated'
 		}))
 	}
 

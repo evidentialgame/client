@@ -14,8 +14,7 @@ const abstractor = abstractorFactory()
 
 const client = new net.Socket()
 
-client.pipe(abstractor)
-abstractor.pipe(client)
+abstractor.bind(client)
 
 const showBigStatus = (message) => {
 	document.querySelector('#status > p').textContent = message
@@ -35,7 +34,7 @@ client.on('end', () => {
 	showBigStatus('Disconnected by server.')
 })
 
-client.connect(8080, () => {
+client.connect(config.port, config.ip, () => {
 	console.log('Connected to server.')
 
 	document.querySelector('#status').style.display = 'none'
@@ -81,6 +80,8 @@ document.querySelector('#login > input').addEventListener('keypress', (e) => {
 
 document.querySelector('#login > input').focus()
 
+document.querySelector('#login > input').value = require('os').userInfo().username.toUpperCase()
+
 const gameState = {
 	'players': [],
 	'title': {
@@ -97,7 +98,13 @@ const gameState = {
 		'display': false,
 		'canTamper': true
 	},
-	'vignette': 80
+	'vignette': 80,
+	'card': null,
+	'teams': [],
+	'timer': {
+		'display': false,
+		'timeLeft': -1
+	}
 }
 
 abstractor.on('transition', (data) => {
@@ -114,6 +121,14 @@ abstractor.on('transition', (data) => {
 
 abstractor.on('title', (data) => {
 	gameState.title = data
+})
+
+abstractor.on('timer', (data) => {
+	gameState.timer = data
+})
+
+abstractor.on('setCard', (data) => {
+	gameState.card = data
 })
 
 abstractor.on('setVoteUI', (data) => {
