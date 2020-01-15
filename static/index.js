@@ -104,7 +104,8 @@ const gameState = {
 	'timer': {
 		'display': false,
 		'timeLeft': -1
-	}
+	},
+	'hoveredTeam': null
 }
 
 abstractor.on('transition', (data) => {
@@ -137,6 +138,12 @@ abstractor.on('setVoteUI', (data) => {
 
 abstractor.on('setTamperUI', (data) => {
 	gameState.tamperUI = data
+})
+
+abstractor.on('disconnect', (data) => {
+	showBigStatus(data.message)
+	
+	client.end()
 })
 
 abstractor.on('updateGame', (state) => {

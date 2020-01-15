@@ -53,21 +53,76 @@ const allPlayerLocations = {
 			'x': renderer.element.width / 2 + 10,
 			'y': renderer.element.height - 275,
 			'spriteDirection': 'left'
+		}
+	],
+	'images/backgrounds/crimescene2.png': [
+		{
+			'x': 80,
+			'y': renderer.element.height - 180,
+			'spriteDirection': 'right'
 		},
 		{
-			'x': 3000,
-			'y': 3000,
+			'x': renderer.element.width - 120,
+			'y': renderer.element.height - 200,
+			'spriteDirection': 'right'
+		},
+		{
+			'x': 170,
+			'y': renderer.element.height - 130,
+			'spriteDirection': 'right'
+		}
+	],
+	'images/backgrounds/crimescene3.png': [
+		{
+			'x': 100,
+			'y': renderer.element.height - 44,
+			'spriteDirection': 'right'
+		},
+		{
+			'x': renderer.element.width - 100,
+			'y': renderer.element.height - 54,
 			'spriteDirection': 'left'
 		},
 		{
-			'x': 3000,
-			'y': 3000,
+			'x': renderer.element.width / 2,
+			'y': renderer.element.height - 48,
 			'spriteDirection': 'left'
 		}
 	]
 }
 
 let playerLocations = allPlayerLocations['images/backgrounds/station.png']
+
+const renderTeamRegionsCount = 6
+
+const teamSelectRegions = []
+let currentTeamX = renderer.element.width - 140 - (90 * (renderTeamRegionsCount - 2))
+
+for (let i = 0; i < renderTeamRegionsCount; i++) {
+	const detectRect = new Rectangle({
+		'width': 80,
+		'height': 80,
+		'x': currentTeamX - 40,
+		'y': 17,
+		'z': 330
+	})
+	
+	detectRect.on('mousein', () => {
+		if (i < gameState.teams.length) {
+			gameState.hoveredTeam = i
+		}
+	})
+	
+	detectRect.on('mouseout', () => {
+		if (gameState.hoveredTeam === i) {
+			gameState.hoveredTeam = null
+		}
+	})
+	
+	teamSelectRegions.push(detectRect)
+	
+	currentTeamX += 90
+}
 
 const selectRegions = []
 
@@ -260,8 +315,6 @@ const renderFrame = () => {
 		}
 		
 		if (playerLocations.length - 1 < i) {
-			alert('Caught player location out of range. render.js:~263')
-			
 			continue
 		}
 		
@@ -295,7 +348,7 @@ const renderFrame = () => {
 			'alignment': 'center',
 			'color': '#EFEFE7',
 			'font': '25px Pixelated',
-			'z': 70
+			'z': 100
 		}))
 		
 		if (gameState.players[i].typing) {
@@ -345,15 +398,26 @@ const renderFrame = () => {
 			'z': 310
 		}))
 		
+		renderer.add(new Text({
+			'x': 148,
+			'y': 65,
+			'alignment': 'left',
+			'text': gameState.card.name,
+			'color': '#222222',
+			'font': '20px Pixelated',
+			'z': 320
+		}))
+		
 		if (gameState.card.text.length > 0) {
 			renderer.add(new Text({
 				'x': 148,
-				'y': 54,
+				'y': 80,
 				'alignment': 'left',
 				'text': gameState.card.text,
 				'color': gameState.card.textColor,
 				'font': '15px Pixelated',
-				'z': 320
+				'z': 320,
+				'color': '#222222'
 			}))
 		}
 	}
@@ -373,6 +437,71 @@ const renderFrame = () => {
 				'y': 89,
 				'z': 310
 			}))
+		}
+		
+		if (gameState.hoveredTeam === i) {
+			renderer.add(new Rectangle({
+				'x': currentTeamX - 300 / 2,
+				'y': 100,
+				'width': 300,
+				'height': 200,
+				'backgroundColor': '#CCCCCC',
+				'z': 500
+			}))
+			
+			renderer.add(new Text({
+				'text': 'Team #' + (i + 1),
+				'alignment': 'left',
+				'x': currentTeamX - 130,
+				'y': 160,
+				'color': '#111111',
+				'z': 510,
+				'font': '20px Pixelated'
+			}))
+			
+			renderer.add(new Text({
+				'text': gameState.teams[i].size + ' members',
+				'alignment': 'left',
+				'x': currentTeamX - 130,
+				'y': 200,
+				'color': '#111111',
+				'z': 510,
+				'font': '15px Pixelated'
+			}))
+			
+			renderer.add(new Text({
+				'text': gameState.teams[i].victor === 'mafia' ? 'Tampering detected.' : (gameState.teams[i].victor === 'officers' ? 'No tampering detected.' : gameState.teams[i].requiredToTamper + ' tamper for mafia win.'),
+				'alignment': 'left',
+				'x': currentTeamX - 130,
+				'y': 220,
+				'color': gameState.teams[i].victor === 'mafia' ? '#ED553B' : (gameState.teams[i].victor === 'officers' ? '#47AB6C' : '#111111'),
+				'z': 510,
+				'font': '15px Pixelated'
+			}))
+			
+			if (gameState.teams[i].players.length > 0) {
+				renderer.add(new Text({
+					'text': 'Members: ' + gameState.teams[i].players.map((player) => player.name).join(', '),
+					'alignment': 'left',
+					'x': currentTeamX - 130,
+					'y': 240,
+					'color': '#111111',
+					'z': 510,
+					'font': '10px Pixelated'
+				}))
+			}
+			
+			if (gameState.teams[i].supporters.length > 0) {
+				renderer.add(new Text({
+					'text': 'Supporters: ' + gameState.teams[i].supporters.map((player) => player.name).join(', '),
+					'alignment': 'left',
+					'x': currentTeamX - 130,
+					'y': 255,
+					'color': '#111111',
+					'z': 510,
+					'font': '10px Pixelated'
+				}))
+			}
 		}
 		
 		renderer.add(new Image({
@@ -395,6 +524,12 @@ const renderFrame = () => {
 		}))
 		
 		currentTeamX -= 90
+	}
+	
+	// Render teamSelectRegions
+	
+	for (let i = 0; i < teamSelectRegions.length; i++) {
+		renderer.add(teamSelectRegions[i])
 	}
 	
 	// Render topbar
@@ -442,7 +577,7 @@ const renderFrame = () => {
 			'alignment': 'center',
 			'color': gameState.title.titleColor,
 			'font': '30px Pixelated',
-			'z': 100
+			'z': 130
 		}))
 
 		renderer.add(new Text({
@@ -452,7 +587,7 @@ const renderFrame = () => {
 			'alignment': 'center',
 			'color': gameState.title.subtitleColor,
 			'font': '20px Pixelated',
-			'z': 100
+			'z': 130
 		}))
 	}
 	else if (gameState.title.displayMode === 1) {
@@ -462,7 +597,7 @@ const renderFrame = () => {
 			'width': renderer.element.width,
 			'height': 80 * 2,
 			'backgroundColor': '#05090C',
-			'z': 90
+			'z': 120
 		}))
 
 		renderer.add(new Text({
@@ -472,7 +607,7 @@ const renderFrame = () => {
 			'alignment': 'center',
 			'color': gameState.title.titleColor,
 			'font': '30px Pixelated',
-			'z': 100
+			'z': 130
 		}))
 
 		renderer.add(new Text({
@@ -482,7 +617,7 @@ const renderFrame = () => {
 			'alignment': 'center',
 			'color': gameState.title.subtitleColor,
 			'font': '20px Pixelated',
-			'z': 100
+			'z': 130
 		}))
 	}
 	

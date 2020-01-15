@@ -27,6 +27,12 @@ abstractor.on('message', (data) => {
 	chatArea.scrollTop = chatArea.scrollHeight
 })
 
+abstractor.on('suggestSend', (data) => {
+	document.querySelector('#messageBox').value = data.content
+	
+	document.querySelector('#messageBox').focus()
+})
+
 document.querySelector('#messageBox').addEventListener('keypress', (e) => {
 	if (e.key === 'Enter') {
 		const messageBox = document.querySelector('#messageBox')

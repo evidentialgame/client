@@ -1,4 +1,4 @@
 const config = {
-	//'ip': '10.70.6.102',
+	'ip': 'localhost',
 	'port': 8080
 }

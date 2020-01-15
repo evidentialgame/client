@@ -20,10 +20,10 @@ app.on('ready', () => {
 		{
 			'label': 'File',
 			'submenu': [
-				{
+				/*{
 					'role': 'toggleFullScreen'
 				},
-				{
+				*/{
 					'role': 'quit'
 				}
 			]
